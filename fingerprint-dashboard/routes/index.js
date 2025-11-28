@@ -86,6 +86,12 @@ router.post('/users/enroll', (req, res) => {
     return res.redirect('/?tab=users&modal=enroll');
   }
   
+  // Check if ID already exists
+  if (users.find(u => u.id === parseInt(id))) {
+    addNotification('error', `User ID ${id} already exists`);
+    return res.redirect('/?tab=users&modal=enroll');
+  }
+  
   const newUser = {
     id: parseInt(id),
     name,
@@ -113,8 +119,9 @@ router.delete('/users/:id', (req, res) => {
 
 router.post('/users/clear', (req, res) => {
   if (users.length > 0) {
+    const userCount = users.length;
     users = [];
-    addNotification('warning', 'All users cleared from system');
+    addNotification('warning', `All ${userCount} users cleared from system`);
   }
   res.redirect('/?tab=users');
 });
@@ -133,6 +140,8 @@ router.post('/logs/refresh', (req, res) => {
   
   if (!newLog.granted) {
     addNotification('warning', `Failed access attempt by ${newLog.userName}`);
+  } else {
+    addNotification('success', `Access granted to ${newLog.userName}`);
   }
   
   res.redirect('/?tab=logs');
@@ -143,9 +152,11 @@ router.post('/devices/refresh', (req, res) => {
   devices = devices.map(device => ({
     ...device,
     lastSeen: new Date(),
-    status: Math.random() > 0.1 ? 'online' : 'offline'
+    status: Math.random() > 0.2 ? 'online' : 'offline', // 80% chance online
+    users: Math.max(1, Math.floor(Math.random() * 10)) // Random user count
   }));
   
+  addNotification('info', 'Device status updated');
   res.redirect('/?tab=devices');
 });
 
