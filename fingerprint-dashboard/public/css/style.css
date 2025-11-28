@@ -1,0 +1,26 @@
+// Client-side functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-refresh devices status every 30 seconds
+    setInterval(() => {
+        if (window.location.search.includes('tab=dashboard') || 
+            window.location.search.includes('tab=devices')) {
+            window.location.reload();
+        }
+    }, 30000);
+
+    // Close modal on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && window.location.search.includes('modal=enroll')) {
+            window.location.href = window.location.href.replace('&modal=enroll', '');
+        }
+    });
+
+    // Add click outside to close modal
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('fixed') && 
+            e.target.classList.contains('inset-0') && 
+            window.location.search.includes('modal=enroll')) {
+            window.location.href = window.location.href.replace('&modal=enroll', '');
+        }
+    });
+});
